@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
+import 'package:todo_app/model/todo.dart';
+
 class TodoItem extends StatefulWidget {
-  const TodoItem({super.key, required this.title});
-  final String title;
+  const TodoItem({super.key, required this.task});
+  final Todo task;
 
   @override
   State<TodoItem> createState() => _TodoItemState();
@@ -13,6 +15,7 @@ class _TodoItemState extends State<TodoItem> {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: widget.task.completed! ? Colors.grey : Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
@@ -21,71 +24,50 @@ class _TodoItemState extends State<TodoItem> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            const Icon(
-              Icons.notes_outlined,
-              size: 50,
-            ),
-            Text(
-              widget.title,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 21),
+            /* TODO: Firebase işlemlerinde düzelt!
+            
+             widget.task.type == TaskType.note
+                ? Image.asset("lib/assets/images/category_1.png")
+                : widget.task.type == TaskType.contest
+                    ? Image.asset("lib/assets/images/category_3.png")
+                    : Image.asset("lib/assets/images/category_2.png"),
+                    */
+            Image.asset("lib/assets/images/category_1.png"),
+            Expanded(
+              child: Column(
+                children: [
+                  Text(
+                    widget.task.todo!,
+                    style: TextStyle(
+                        decoration: widget.task.completed!
+                            ? TextDecoration.lineThrough
+                            : TextDecoration.none,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 21),
+                  ),
+                  Text(
+                    "User: ${widget.task.userId!}",
+                    style: TextStyle(
+                        decoration: widget.task.completed!
+                            ? TextDecoration.lineThrough
+                            : TextDecoration.none),
+                  )
+                ],
+              ),
             ),
             Checkbox(
               value: isChecked,
               onChanged: (val) => {
                 setState(
                   () {
+                    widget.task.completed = !widget.task.completed!;
                     isChecked = val!;
                   },
                 ),
               },
-            )
+            ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    double deviceHeight = MediaQuery.of(context).size.height;
-    double deviceWidth = MediaQuery.of(context).size.width;
-
-    return Container(
-      width: deviceWidth,
-      height: deviceHeight / 3,
-      decoration: const BoxDecoration(
-        color: Colors.purple,
-        image: DecorationImage(
-            image: AssetImage("lib/assets/images/header.png"),
-            fit: BoxFit.cover),
-      ),
-      child: const Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.only(top: 20),
-            child: Text(
-              "October, 20, 2023",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 40),
-            child: Text(
-              "My ToDo List",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 35,
-                  fontWeight: FontWeight.bold),
-            ),
-          )
-        ],
       ),
     );
   }
